@@ -47,7 +47,7 @@ public class PlayerControl : MonoBehaviour
             anim.SetBool("Run", false);
         }
 
-        if (Input.GetKey(KeyCode.S))//①Sキーがおされたら
+        if (Input.GetKey(KeyCode.S))//Sキーがおされたら
         {
             //後方にMoveSpeed＊Time.deltaTimeだけ動かす
             characterController.Move(this.gameObject.transform.forward * -1f * MoveSpeed * Time.deltaTime);
@@ -58,7 +58,7 @@ public class PlayerControl : MonoBehaviour
             anim.SetBool("Run", false);
         }
 
-        if (Input.GetKey(KeyCode.A))//①Aキーがおされたら 
+        if (Input.GetKey(KeyCode.A))//Aキーがおされたら 
         {
             anim.SetBool("Run", true);
             //左にMoveSpeed＊Time.deltaTimeだけ動かす
@@ -69,7 +69,7 @@ public class PlayerControl : MonoBehaviour
             anim.SetBool("Run", false);
         }
 
-        if (Input.GetKey(KeyCode.D))//①Dキーがおされたら 
+        if (Input.GetKey(KeyCode.D))//Dキーがおされたら 
         {
             anim.SetBool("Run", true);
             //右にMoveSpeed＊Time.deltaTimeだけ動かす
@@ -79,6 +79,8 @@ public class PlayerControl : MonoBehaviour
         {
             anim.SetBool("Run", false);
         }
+
+
 
         characterController.Move(Velocity);//キャラクターコントローラーをVeloctiyだけ動かし続ける
         Velocity.y += Physics.gravity.y * Time.deltaTime;   //Velocityのy軸を重力*Time.deltaTime分だけ動かす
