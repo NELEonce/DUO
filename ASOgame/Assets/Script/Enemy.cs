@@ -12,12 +12,14 @@ public class Enemy : MonoBehaviour
     public Transform player;                        //プレイヤーの位置を取得するためのTransform型の変数
 	public Transform enemypos;                      //敵の位置を取得するためのTransform型の変数
 	private NavMeshAgent agent;                     //NavMeshAgentの情報を取得するためのNavmeshagent型の変数
+    private Animator anim;                          //アニメーション
 
 
-	void Start()
+    void Start()
 	{
 		agent = GetComponent<NavMeshAgent>();//NavMeshAgentの情報をagentに代入
-	}
+        anim = GetComponent<Animator>();
+    }
 
 	void Update()
 	{
@@ -54,13 +56,18 @@ public class Enemy : MonoBehaviour
 				}
                 //NavMeshAgentの情報を取得し目的地をposにする
                 GetComponent<NavMeshAgent>().SetDestination(pos);
+                //待機
+                anim.SetBool("Run Forward", false);
+
                 break;
 
             //Mode1の場合
             case 1:
                 //プレイヤーに向かって進む		
                 agent.destination = player.transform.position;
-				break;
+                //走るアニメーション
+                anim.SetBool("Run Forward", true);
+                break;
 		}
 	}
 }
