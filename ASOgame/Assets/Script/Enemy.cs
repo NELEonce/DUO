@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
 	public Transform enemypos;                      //敵の位置を取得するためのTransform型の変数
 	private NavMeshAgent agent;                     //NavMeshAgentの情報を取得するためのNavmeshagent型の変数
     private Animator anim;                          //アニメーション
+    private RaycastHit hit;                          //EnemyがPlayerに当たった時の情報
 
 
     void Start()
@@ -69,19 +70,6 @@ public class Enemy : MonoBehaviour
                 anim.SetBool("Run Forward", true);
                 break;
 		}
-	}
+
+    }
 }
-
-/*
-void Start()
-{
-
-}
-
-
-void Update()
-{
-	transform.LookAt(target.transform); //ターゲットの方を向く
-	transform.position += transform.forward * 10f * Time.deltaTime;//向いてる方向に進む
-}
-}*/

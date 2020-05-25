@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -17,108 +18,129 @@ public class PlayerControl : MonoBehaviour
     public GameObject Muzzle;                           //Rayを発射する場所
     private GameObject[] enemyObjects;                  //敵の数を取得するための配列
     public GameObject Clear;                            //クリア時に出現する文字
-
+    bool oldButton;                                     //毎フレームのボタンの押下状況
+    bool newButton;                                     //現在の押下状況
+    bool trgButton;                                     //前に押してなくて今押した状態
+    bool visible;                                       //生存フラグ
+    private GameObject muzzleFlash;
 
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
         Clear.SetActive(false); //クリアの文字を非表示
+        visible = true;
+        Cursor.visible = false; //カーソルを消す
+        muzzleFlash = transform.FindChild("Bone024").FindChild("AK47").FindChild("MuzzleFlash").gameObject;
     }
 
 
     void Update()
     {
-        float X_Rotation = Input.GetAxis("Mouse X");    //X_RotationにマウスのX軸の動きを代入する
-        float Y_Rotation = Input.GetAxis("Mouse Y");    //Y_RotationにマウスのY軸の動きを代入する
-        horRot.transform.Rotate(new Vector3(0, X_Rotation * 2, 0)); //プレイヤーのY軸の回転をX_Rotationで合わせる
-        verRot.transform.Rotate(-Y_Rotation * 2, 0, 0);    //カメラのX軸の回転をY_Rotationに合わせる
-
-
-
-        //Wキーがおされたら 
-        if (Input.GetKey(KeyCode.W))
+        if(visible)
         {
-            //前方にMoveSpeed＊Time.deltaTimeだけ動かす
-            characterController.Move(this.gameObject.transform.forward * MoveSpeed * Time.deltaTime);
-            //走るアニメーション
-            anim.SetBool("Move", true);
-        }
-        //ボタンを離したら
-        else if(Input.GetKeyUp(KeyCode.W))
-        {
-            //待機アニメーション
-            anim.SetBool("Move", false);
-        }
+            float X_Rotation = Input.GetAxis("Mouse X");                //X_RotationにマウスのX軸の動きを代入する
+            float Y_Rotation = Input.GetAxis("Mouse Y");                //Y_RotationにマウスのY軸の動きを代入する
+            horRot.transform.Rotate(new Vector3(0, X_Rotation * 2, 0)); //プレイヤーのY軸の回転をX_Rotationで合わせる
+            verRot.transform.Rotate(-Y_Rotation * 2, 0, 0);             //カメラのX軸の回転をY_Rotationに合わせる
 
-
-        //Sキーがおされたら
-        if (Input.GetKey(KeyCode.S))
-        {
-            //後方にMoveSpeed＊Time.deltaTimeだけ動かす
-            characterController.Move(this.gameObject.transform.forward * -1f * MoveSpeed * Time.deltaTime);
-            anim.SetBool("Move", true);
-        }
-        else if(Input.GetKeyUp(KeyCode.S))
-        {
-            anim.SetBool("Move", false);
-        }
-
-
-        //Aキーがおされたら 
-        if (Input.GetKey(KeyCode.A))
-        {
-            //左にMoveSpeed＊Time.deltaTimeだけ動かす
-            characterController.Move(this.gameObject.transform.right * -1 * MoveSpeed * Time.deltaTime);
-            anim.SetBool("Move", true);
-        }
-        else if(Input.GetKeyUp(KeyCode.A))
-        {
-            anim.SetBool("Move", false);
-        }
-
-
-        //Dキーがおされたら 
-        if (Input.GetKey(KeyCode.D))
-        {
-            //右にMoveSpeed＊Time.deltaTimeだけ動かす
-            characterController.Move(this.gameObject.transform.right * MoveSpeed * Time.deltaTime);
-            anim.SetBool("Move", true);
-        }
-        else if(Input.GetKeyUp(KeyCode.D))
-        {
-            anim.SetBool("Move", false);
-        }
-
-
-
-        characterController.Move(Velocity);                 //キャラクターコントローラーをVeloctiyだけ動かし続ける
-        Velocity.y += Physics.gravity.y * Time.deltaTime;   //Velocityのy軸を重力*Time.deltaTime分だけ動かす
-
-
-        //マウスが左クリックされたら
-        if (Input.GetMouseButton(0))
-        {
-            //RayをMuzzleの場所から前方に飛ばす
-            Ray ray = new Ray(Muzzle.transform.position, Muzzle.transform.forward);
-
-            //Rayを赤色で表示させる
-            Debug.DrawRay(ray.origin, ray.direction, Color.red);    
-
-            //Rayがdistanceの範囲内で何かに当たった時に
-            if (Physics.Raycast(ray,out hit,distance))   
+            //Wキーがおされたら 
+            if (Input.GetKey(KeyCode.W))
             {
-                //もし当たった物のタグがEnemyだったら
-                if (hit.collider.tag == "Enemy") 
-                {
-                    //当たった物を消去
-                    Destroy(hit.collider.gameObject);
+                //前方にMoveSpeed＊Time.deltaTimeだけ動かす
+                characterController.Move(this.gameObject.transform.forward * MoveSpeed * Time.deltaTime);
+                //走るアニメーション
+                anim.SetBool("Move", true);
+            }
+            //ボタンを離したら
+            else if (Input.GetKeyUp(KeyCode.W))
+            {
+                //待機アニメーション
+                anim.SetBool("Move", false);
+            }
 
-                    //Rayが当たった場所に爆発を生成する
-                    Instantiate(Explosion.gameObject, hit.collider.gameObject.transform.position, gameObject.transform.rotation);
+
+            //Sキーがおされたら
+            if (Input.GetKey(KeyCode.S))
+            {
+                //後方にMoveSpeed＊Time.deltaTimeだけ動かす
+                characterController.Move(this.gameObject.transform.forward * -1f * MoveSpeed * Time.deltaTime);
+                anim.SetBool("Move", true);
+            }
+            else if (Input.GetKeyUp(KeyCode.S))
+            {
+                anim.SetBool("Move", false);
+            }
+
+
+            //Aキーがおされたら 
+            if (Input.GetKey(KeyCode.A))
+            {
+                //左にMoveSpeed＊Time.deltaTimeだけ動かす
+                characterController.Move(this.gameObject.transform.right * -1 * MoveSpeed * Time.deltaTime);
+                anim.SetBool("Move", true);
+            }
+            else if (Input.GetKeyUp(KeyCode.A))
+            {
+                anim.SetBool("Move", false);
+            }
+
+
+            //Dキーがおされたら 
+            if (Input.GetKey(KeyCode.D))
+            {
+                //右にMoveSpeed＊Time.deltaTimeだけ動かす
+                characterController.Move(this.gameObject.transform.right * MoveSpeed * Time.deltaTime);
+                anim.SetBool("Move", true);
+            }
+            else if (Input.GetKeyUp(KeyCode.D))
+            {
+                anim.SetBool("Move", false);
+            }
+
+
+
+            characterController.Move(Velocity);                 //キャラクターコントローラーをVeloctiyだけ動かし続ける
+            Velocity.y += Physics.gravity.y * Time.deltaTime;   //Velocityのy軸を重力*Time.deltaTime分だけ動かす
+
+
+            oldButton = newButton;
+            trgButton = false;
+            newButton = Input.GetMouseButton(0);
+            trgButton = newButton & !oldButton;
+
+            //マウスが左クリックされたら
+            if (trgButton)
+            {
+                //RayをMuzzleの場所から前方に飛ばす
+                Ray ray = new Ray(Muzzle.transform.position, Muzzle.transform.forward);
+
+                //Rayを赤色で表示させる
+                Debug.DrawRay(ray.origin, ray.direction, Color.red);
+
+                //マズルフラッシュを表示
+                muzzleFlash.SetActive(true);
+
+                //Rayがdistanceの範囲内で何かに当たった時に
+                if (Physics.Raycast(ray, out hit, distance))
+                {
+                    //もし当たった物のタグがEnemyだったら
+                    if (hit.collider.tag == "Enemy")
+                    {
+                        //当たった物を消去
+                        Destroy(hit.collider.gameObject);
+
+                        //Rayが当たった場所に爆発を生成する
+                        Instantiate(Explosion.gameObject, hit.collider.gameObject.transform.position, gameObject.transform.rotation);
+                    }
                 }
             }
+            else
+            {
+                muzzleFlash.SetActive(false);
+            }
         }
+        
 
         //enemyObjectsにEnemyのタグがついているオブジェクトを代入する
         enemyObjects = GameObject.FindGameObjectsWithTag("Enemy");
@@ -127,7 +149,30 @@ public class PlayerControl : MonoBehaviour
         if (enemyObjects.Length == 0)
         {
             //クリアを表示
-            Clear.SetActive(true);
+            SceneManager.LoadScene("Clear");
+        }
+
+        
+    }
+
+    //敵に当たったら
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            visible = false;
+            //死ぬアニメーション
+            anim.SetBool("Death", true);
+            //2秒後に実行
+            Invoke("GameOverScene", 1.8f);
         }
     }
+    
+    //ゲームオーバー画面
+    void GameOverScene()
+    {
+        //ゲームオーバーを表示
+       SceneManager.LoadScene("Over");
+    }
+    
 }
