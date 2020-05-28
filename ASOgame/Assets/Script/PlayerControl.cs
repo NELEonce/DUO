@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -17,27 +18,41 @@ public class PlayerControl : MonoBehaviour
     private RaycastHit hit;                             //Rayが何かに当たった時の情報
     public GameObject Muzzle;                           //Rayを発射する場所
     private GameObject[] enemyObjects;                  //敵の数を取得するための配列
-    public GameObject Clear;                            //クリア時に出現する文字
     bool oldButton;                                     //毎フレームのボタンの押下状況
     bool newButton;                                     //現在の押下状況
     bool trgButton;                                     //前に押してなくて今押した状態
     bool visible;                                       //生存フラグ
-    private GameObject muzzleFlash;
+    private GameObject muzzleFlash;                     //マズルフラッシュをするゲームオブジェクト
+    public AudioClip playerShot;                        //プレイヤーが撃った時のSE
+    public AudioClip enemyExplosion;                    //エネミーが死んだときのSE
+    AudioSource audioSource;                            //AudioSourceを格納
+    public GameObject Clear;                            //クリア時に出現する文字
+    public GameObject Sighting;                         //クリア時に出現する文字
+
+
+    private bool afterFinish;           // 戦闘が終了しているかのフラグ
+    private float afterFinishTime;      // 戦闘終了後の経過時間(秒)
+    public Text text_result;            // 戦闘結果表示UI
+    public Text text_battleTime;        // 戦闘時間表示UI
+    private float battleTime;           // 戦闘時間(秒)
 
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
-        Clear.SetActive(false); //クリアの文字を非表示
         visible = true;
-        Cursor.visible = false; //カーソルを消す
         muzzleFlash = transform.FindChild("Bone024").FindChild("AK47").FindChild("MuzzleFlash").gameObject;
+        audioSource = GetComponent<AudioSource>();
+        Clear.SetActive(false);
+        Sighting.SetActive(true);
+        afterFinish = false;
     }
 
 
     void Update()
     {
-        if(visible)
+        Cursor.visible = false; //カーソルを消す
+        if (visible)
         {
             float X_Rotation = Input.GetAxis("Mouse X");                //X_RotationにマウスのX軸の動きを代入する
             float Y_Rotation = Input.GetAxis("Mouse Y");                //Y_RotationにマウスのY軸の動きを代入する
@@ -132,15 +147,20 @@ public class PlayerControl : MonoBehaviour
 
                         //Rayが当たった場所に爆発を生成する
                         Instantiate(Explosion.gameObject, hit.collider.gameObject.transform.position, gameObject.transform.rotation);
+
+                        //爆発SE
+                        audioSource.PlayOneShot(enemyExplosion, 0.2f);
                     }
                 }
+                //ショットSE
+                audioSource.PlayOneShot(playerShot, 0.07f);
             }
             else
             {
                 muzzleFlash.SetActive(false);
             }
         }
-        
+
 
         //enemyObjectsにEnemyのタグがついているオブジェクトを代入する
         enemyObjects = GameObject.FindGameObjectsWithTag("Enemy");
@@ -148,12 +168,40 @@ public class PlayerControl : MonoBehaviour
         //もしenemyObjectsの数が0なら（敵が全滅したら）
         if (enemyObjects.Length == 0)
         {
+            //戦闘終了
+            afterFinish = true;
             //クリアを表示
-            SceneManager.LoadScene("Clear");
+            Clear.SetActive(true);
+            //照準を非表示
+            Sighting.SetActive(false);
+            //4秒後に実行
+            Invoke("LoadSceneClear", 4.0f);
         }
 
-        
+
+        // 戦闘時間をカウントして表示
+        if (!afterFinish)
+        { // 戦闘が終了していなければ
+          // 経過時間をカウント
+            battleTime += Time.deltaTime;
+            text_battleTime.text = "タイム : " + battleTime.ToString("F1");
+        }
+
+        // 戦闘が終了したなら
+        if (afterFinish)
+        {
+            afterFinishTime = 0.0f;
+            //撃破時間処理
+            Data data = GameObject.Find("DataManager").GetComponent<Data>(); // データスクリプトを取得
+            //戦闘時間がステージの最速タイムより短ければ
+            if (battleTime < data.BestTime_01)
+            {
+                //最速タイムを更新
+                data.BestTime_01 = battleTime;
+            }
+        }
     }
+
 
     //敵に当たったら
     void OnCollisionEnter(Collision collision)
@@ -167,12 +215,19 @@ public class PlayerControl : MonoBehaviour
             Invoke("GameOverScene", 1.8f);
         }
     }
-    
+
     //ゲームオーバー画面
     void GameOverScene()
     {
         //ゲームオーバーを表示
-       SceneManager.LoadScene("Over");
+        SceneManager.LoadScene("Over");
     }
-    
+
+    //クリアシーンに移動
+    void LoadSceneClear()
+    {
+        SceneManager.LoadScene("Clear");
+    }
 }
+     
+
