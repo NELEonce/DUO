@@ -29,13 +29,13 @@ public class Enemy : MonoBehaviour
 		float distance = Vector3.Distance(enemypos.position, player.transform.position);//敵とプレイヤーの距離を求める
 
         //もしプレイヤーと敵の距離が5以上なら
-        if (distance > 30)
+        if (distance > 60)
 		{
 			Mode = 0;   //Modeを0にする
 		}
 
         //もしプレイヤーと敵の距離が5以下なら
-        if (distance < 30)
+        if (distance < 60)
 		{
 			Mode = 1;   //Modeを1にする
 		}
@@ -59,7 +59,7 @@ public class Enemy : MonoBehaviour
                 //NavMeshAgentの情報を取得し目的地をposにする
                 GetComponent<NavMeshAgent>().SetDestination(pos);
                 //待機
-                anim.SetBool("Run Forward", false);
+                anim.SetBool("Run Forward", true);
 
                 break;
 

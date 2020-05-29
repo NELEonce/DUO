@@ -1551,7 +1551,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 15
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1577,9 +1577,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   wayPoints:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: 190, y: 0, z: 58}
+  - {x: 180, y: 0, z: 50}
+  - {x: 175, y: 0, z: 63}
   player: {fileID: 0}
   enemypos: {fileID: 3649787905373871414}
 --- !u!54 &1541382390693974560
