@@ -24,6 +24,7 @@ public class ScreenTransition : MonoBehaviour
     //ゲーム画面へ
     public void Select_Game()
     {
+
         GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("GameMain");
     }
 
@@ -62,4 +63,5 @@ public class ScreenTransition : MonoBehaviour
     {
         GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("Title");
     }
+
 }

@@ -29,13 +29,13 @@ public class Enemy : MonoBehaviour
 		float distance = Vector3.Distance(enemypos.position, player.transform.position);//敵とプレイヤーの距離を求める
 
         //もしプレイヤーと敵の距離が5以上なら
-        if (distance > 60)
+        if (distance > 40)
 		{
 			Mode = 0;   //Modeを0にする
 		}
 
         //もしプレイヤーと敵の距離が5以下なら
-        if (distance < 60)
+        if (distance < 40)
 		{
 			Mode = 1;   //Modeを1にする
 		}
