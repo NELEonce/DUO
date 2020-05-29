@@ -33,6 +33,18 @@ public class ScreenTransition : MonoBehaviour
         GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("Rule");
     }
 
+    //操作方法画面へ
+    public void Select_Operation()
+    {
+        GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("Operation");
+    }
+
+    //セレクト画面へ
+    public void Operation_Select()
+    {
+        GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("Select");
+    }
+
     //セレクト画面へ
     public void Rule_Select()
     {
