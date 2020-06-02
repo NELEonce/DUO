@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Over.unity
     guid: 2bbfbdb5ddc905443bc49b9d2e4f6b3f
+  - enabled: 1
+    path: Assets/Scenes/ManagerScene.unity
+    guid: 70a8228897d489241935b652c7af683d
   m_configObjects: {}

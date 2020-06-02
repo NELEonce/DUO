@@ -8,11 +8,15 @@ public class ClearTime : MonoBehaviour
 
     // メンバ変数宣言
     public Text text_BestTime_1; // ステージ最速クリアタイム表示UI
+    public Text text_ClearTime_1; // ステージクリアタイム表示UI
+
+
 
     void Start()
     {
         // 最速クリアタイムをUIに表示
         Data data = GameObject.Find("DataManager").GetComponent<Data>(); // データスクリプトを取得
-        text_BestTime_1.text = "ベストタイム  " + data.BestTime_01.ToString("F1")+"秒!!";
+        text_BestTime_1.text = "ベストタイム  " + data.BestTime_01.ToString("F1") + "秒!!";
+        text_ClearTime_1.text = "クリアタイム  " + data.ClearTime_01.ToString("F1") + "秒!!";
     }
 }

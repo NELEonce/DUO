@@ -5,29 +5,60 @@ using UnityEngine.SceneManagement;
 
 public class BGM : MonoBehaviour
 {
+    public AudioClip Title;
+    public AudioClip GameMain;
+    public AudioClip Clear;
+    public AudioClip Over;
+
+    AudioSource audio;
+
     void Start()
     {
-       DontDestroyOnLoad(this);    //遷移しても流し続ける
-       SceneManager.sceneLoaded += BGM_Destroyer;
+        //遷移しても流し続ける
+        DontDestroyOnLoad(this);    
 
+        //どのシーンをロードするか
+        SceneManager.sceneLoaded += BGM_SceneLoad;
+
+        //AudioSourceを取得
+        audio = GetComponent<AudioSource>();
     }
 
-
-
-    void Update()
+    //何のシーンをロードしたか
+    void BGM_SceneLoad(Scene scene,LoadSceneMode mode)
     {
-       
-    }
-
-
-
-    //BGMオブジェクトの破棄
-    void BGM_Destroyer(Scene scene,LoadSceneMode mode)
-    {
-        if(scene.name=="GameMain")
+        //タイトルBGM
+        if (scene.name == "Title") 
         {
-            SceneManager.MoveGameObjectToScene(gameObject,SceneManager.GetActiveScene());
-            //Destroy(this.gameObject);
+            audio.clip = Title;
+            audio.Play();
+        }
+
+        //ゲーム中BGM
+        if (scene.name == "GameMain")
+        {
+
+            audio.clip = GameMain;
+            audio.Play();
+
+        }
+
+        //クリアBGM
+        if (scene.name == "Clear")
+        {
+           
+            audio.clip = Clear;
+            audio.Play();
+
+        }
+
+        //ゲームオーバーBGM
+        if (scene.name == "Over")
+        {
+            
+            audio.clip = Over;
+            audio.Play();
+
         }
     }
 }

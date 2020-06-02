@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;   //NavMeshagentを使うために記述する
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -14,9 +15,8 @@ public class Enemy : MonoBehaviour
 	private NavMeshAgent agent;                     //NavMeshAgentの情報を取得するためのNavmeshagent型の変数
     private Animator anim;                          //アニメーション
     private RaycastHit hit;                         //EnemyがPlayerに当たった時の情報
+    
    
-
-
     void Start()
 	{
 		agent = GetComponent<NavMeshAgent>();//NavMeshAgentの情報をagentに代入
@@ -25,7 +25,9 @@ public class Enemy : MonoBehaviour
 
 	void Update()
 	{
-		Vector3 pos = wayPoints[currentRoot];//Vector3型のposに現在の目的地の座標を代入
+        
+
+        Vector3 pos = wayPoints[currentRoot];//Vector3型のposに現在の目的地の座標を代入
 		float distance = Vector3.Distance(enemypos.position, player.transform.position);//敵とプレイヤーの距離を求める
 
         //もしプレイヤーと敵の距離が5以上なら
@@ -58,7 +60,7 @@ public class Enemy : MonoBehaviour
 				}
                 //NavMeshAgentの情報を取得し目的地をposにする
                 GetComponent<NavMeshAgent>().SetDestination(pos);
-                //待機
+                //その場で徘徊させる
                 anim.SetBool("Run Forward", true);
 
                 break;
@@ -71,6 +73,11 @@ public class Enemy : MonoBehaviour
                 anim.SetBool("Run Forward", true);
                 break;
 		}
+        
+        
 
     }
+
+    
 }
+         

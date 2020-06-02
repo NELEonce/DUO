@@ -114,15 +114,14 @@ public class PlayerControl : MonoBehaviour
             }
 
 
-
             characterController.Move(Velocity);                 //キャラクターコントローラーをVeloctiyだけ動かし続ける
             Velocity.y += Physics.gravity.y * Time.deltaTime;   //Velocityのy軸を重力*Time.deltaTime分だけ動かす
-
 
             oldButton = newButton;
             trgButton = false;
             newButton = Input.GetMouseButton(0);
             trgButton = newButton & !oldButton;
+
 
             //マウスが左クリックされたら
             if (trgButton)
@@ -149,11 +148,11 @@ public class PlayerControl : MonoBehaviour
                         Instantiate(Explosion.gameObject, hit.collider.gameObject.transform.position, gameObject.transform.rotation);
 
                         //爆発SE
-                        audioSource.PlayOneShot(enemyExplosion, 0.2f);
+                        audioSource.PlayOneShot(enemyExplosion, 0.1f);
                     }
                 }
                 //ショットSE
-                audioSource.PlayOneShot(playerShot, 0.07f);
+                audioSource.PlayOneShot(playerShot, 0.05f);
             }
             else
             {
@@ -174,15 +173,14 @@ public class PlayerControl : MonoBehaviour
             Clear.SetActive(true);
             //照準を非表示
             Sighting.SetActive(false);
-            //4秒後に実行
-            Invoke("LoadSceneClear", 4.0f);
+            //2秒後に実行
+            Invoke("LoadSceneClear", 2.0f);
         }
 
 
         // 戦闘時間をカウントして表示
         if (!afterFinish)
-        { // 戦闘が終了していなければ
-          // 経過時間をカウント
+        { // 戦闘が終了していなければ経過時間をカウント
             battleTime += Time.deltaTime;
             text_battleTime.text = "タイム : " + battleTime.ToString("F1");
         }
@@ -193,12 +191,19 @@ public class PlayerControl : MonoBehaviour
             afterFinishTime = 0.0f;
             //撃破時間処理
             Data data = GameObject.Find("DataManager").GetComponent<Data>(); // データスクリプトを取得
+
             //戦闘時間がステージの最速タイムより短ければ
             if (battleTime < data.BestTime_01)
             {
                 //最速タイムを更新
                 data.BestTime_01 = battleTime;
             }
+            else
+            {
+                //クリアタイムを表示
+                data.ClearTime_01 = battleTime;
+            }
+  
         }
     }
 
@@ -208,6 +213,7 @@ public class PlayerControl : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
+            //死亡
             visible = false;
             //死ぬアニメーション
             anim.SetBool("Death", true);
