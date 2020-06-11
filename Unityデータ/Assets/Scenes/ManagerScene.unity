@@ -250,6 +250,7 @@ MonoBehaviour:
   GameMain: {fileID: 8300000, guid: 5c580d433e80e144891791eae0da05ad, type: 3}
   Clear: {fileID: 8300000, guid: 0f6fe806a3e6ea34782c09a0ce858413, type: 3}
   Over: {fileID: 8300000, guid: cdfdae8627cb45d458960ea583e72143, type: 3}
+  Tutorial: {fileID: 8300000, guid: 988d8ec69a51e45428bdc9c101a46fde, type: 3}
 --- !u!4 &290421531
 Transform:
   m_ObjectHideFlags: 0

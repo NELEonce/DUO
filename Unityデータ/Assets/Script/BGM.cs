@@ -9,6 +9,7 @@ public class BGM : MonoBehaviour
     public AudioClip GameMain;
     public AudioClip Clear;
     public AudioClip Over;
+    public AudioClip Tutorial;
 
     AudioSource audio;
 
@@ -57,6 +58,15 @@ public class BGM : MonoBehaviour
         {
             
             audio.clip = Over;
+            audio.Play();
+
+        }
+
+        //チュートリアルBGM
+        if (scene.name == "Tutorial")
+        {
+
+            audio.clip = Tutorial;
             audio.Play();
 
         }

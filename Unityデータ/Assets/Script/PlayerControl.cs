@@ -27,12 +27,16 @@ public class PlayerControl : MonoBehaviour
     public AudioClip enemyExplosion;                    //エネミーが死んだときのSE
     AudioSource audioSource;                            //AudioSourceを格納
     public GameObject Clear;                            //クリア時に出現する文字
-    public GameObject Sighting;                         //クリア時に出現する文字
-
+    public GameObject Step1;                            //Step1
+    public GameObject Step2;                            //Step2
+    public GameObject Step3;                            //Step3
+    public GameObject Step4;                            //Step4
+    public GameObject Step5;                            //Step5
+    public GameObject Step6;                            //Step6
+    public GameObject Sighting;                         //照準
 
     private bool afterFinish;           // 戦闘が終了しているかのフラグ
     private float afterFinishTime;      // 戦闘終了後の経過時間(秒)
-    public Text text_result;            // 戦闘結果表示UI
     public Text text_battleTime;        // 戦闘時間表示UI
     private float battleTime;           // 戦闘時間(秒)
 
@@ -46,6 +50,12 @@ public class PlayerControl : MonoBehaviour
         Clear.SetActive(false);
         Sighting.SetActive(true);
         afterFinish = false;
+        Step1.SetActive(true);
+        Step2.SetActive(false);
+        Step3.SetActive(false);
+        Step4.SetActive(false);
+        Step5.SetActive(false);
+        Step6.SetActive(false);
     }
 
 
@@ -150,6 +160,59 @@ public class PlayerControl : MonoBehaviour
                         //爆発SE
                         audioSource.PlayOneShot(enemyExplosion, 0.1f);
                     }
+
+
+                    //チュートリアルで使う
+                    //Step1
+                    if (hit.collider.tag == "Step1")
+                    {
+                        //当たった物を消去
+                        Destroy(hit.collider.gameObject);
+                        Step1.SetActive(false);
+                        Step2.SetActive(true);
+                    }
+                    //Step2
+                    if (hit.collider.tag == "Step2")
+                    {
+                        Destroy(hit.collider.gameObject);
+                        Step2.SetActive(false);
+                        Step3.SetActive(true);
+                    }
+                    //Step3
+                    if (hit.collider.tag == "Step3")
+                    {
+                        Destroy(hit.collider.gameObject);
+                        Step4.SetActive(true);
+                        Step3.SetActive(false);
+                    }
+                    //Step4
+                    if (hit.collider.tag == "Step4")
+                    {
+                        Destroy(hit.collider.gameObject);
+                        Step4.SetActive(false);
+                        Step5.SetActive(true);
+
+                    }
+                    //Step5
+                    if (hit.collider.tag == "Step5")
+                    {
+                        Destroy(hit.collider.gameObject);
+                        Step5.SetActive(false);
+                        Step6.SetActive(true);
+                    }
+                    //Step6
+                    if (hit.collider.tag == "Step6")
+                    {
+                        Step6.SetActive(false);
+                        Destroy(hit.collider.gameObject);
+                        //クリアを表示
+                        Clear.SetActive(true);
+                        //照準を非表示
+                        Sighting.SetActive(false);
+                        //2秒後に実行
+                        Invoke("LoadSceneSelect", 2.0f);
+                    }
+                    
                 }
                 //ショットSE
                 audioSource.PlayOneShot(playerShot, 0.05f);
@@ -158,6 +221,7 @@ public class PlayerControl : MonoBehaviour
             {
                 muzzleFlash.SetActive(false);
             }
+
         }
 
 
@@ -221,18 +285,25 @@ public class PlayerControl : MonoBehaviour
             Invoke("GameOverScene", 1.8f);
         }
     }
+   
 
     //ゲームオーバー画面
     void GameOverScene()
     {
         //ゲームオーバーを表示
-        SceneManager.LoadScene("Over");
+        GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("Over");
     }
 
     //クリアシーンに移動
     void LoadSceneClear()
     {
-        SceneManager.LoadScene("Clear");
+        GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("Clear");
+    }
+
+    //セレクトシーンに移動
+    void LoadSceneSelect()
+    {
+        GameObject.Find("FadeManager").GetComponent<Fade>().TransitionScene("Select");
     }
 }
      
